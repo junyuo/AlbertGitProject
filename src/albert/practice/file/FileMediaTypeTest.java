@@ -13,7 +13,7 @@ import org.apache.tika.mime.MediaType;
  * @author albert
  *
  */
-public class FileTest {
+public class FileMediaTypeTest {
 
 	// set up the path and name of test file
 	private final static String DROPBOX_HOME = "/Users/albert/Dropbox/";
@@ -38,13 +38,13 @@ public class FileTest {
 	private final static MediaType exe = MediaType.parse("application/x-msdownload");
 
 	public static void main(String[] args) throws IOException {
-		new FileTest().checkFileMediaType(DOC_FILE, doc);
-		new FileTest().checkFileMediaType(DOCX_FILE, docx);
-		new FileTest().checkFileMediaType(XLSX_FILE, xlsx);
-		new FileTest().checkFileMediaType(TXT_FILE, txt);
-		new FileTest().checkFileMediaType(JPG_FILE, jpg);
-		new FileTest().checkFileMediaType(PDF_FILE, pdf);
-		new FileTest().checkFileMediaType(FAKE_EXE_FILE, exe);
+		new FileMediaTypeTest().checkFileMediaType(DOC_FILE, doc);
+		new FileMediaTypeTest().checkFileMediaType(DOCX_FILE, docx);
+		new FileMediaTypeTest().checkFileMediaType(XLSX_FILE, xlsx);
+		new FileMediaTypeTest().checkFileMediaType(TXT_FILE, txt);
+		new FileMediaTypeTest().checkFileMediaType(JPG_FILE, jpg);
+		new FileMediaTypeTest().checkFileMediaType(PDF_FILE, pdf);
+		new FileMediaTypeTest().checkFileMediaType(FAKE_EXE_FILE, exe);
 	}
 
 	public void checkFileMediaType(String sourceFile, MediaType expectedMediaType) throws IOException {
