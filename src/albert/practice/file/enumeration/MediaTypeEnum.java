@@ -1,6 +1,3 @@
-/**
- * 
- */
 package albert.practice.file.enumeration;
 
 /**
