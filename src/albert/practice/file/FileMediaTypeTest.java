@@ -56,7 +56,7 @@ public class FileMediaTypeTest {
 
             if (!(expectedMediaType.equals(mediaType))) {
                 String actualMediaTypeName = mediaType;
-                String errorMsg = "Worng media type ! Expected:" + expectedMediaType + ", Actual:"
+                String errorMsg = "Wrong media type ! Expected:" + expectedMediaType + ", Actual:"
                         + actualMediaTypeName;
                 System.err.println(errorMsg);
                 throw new RuntimeException(errorMsg);
