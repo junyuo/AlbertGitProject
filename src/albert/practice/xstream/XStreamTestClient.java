@@ -1,7 +1,11 @@
 package albert.practice.xstream;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 import albert.practice.xstream.beans.Attributes;
 import albert.practice.xstream.beans.PolicyNumbers;
@@ -20,7 +24,7 @@ import com.thoughtworks.xstream.XStream;
  */
 public class XStreamTestClient {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Attributes attribute = new Attributes();
         attribute.setWorkLoad("TW_NEWNBED");
@@ -44,6 +48,7 @@ public class XStreamTestClient {
         String xml = new XStreamTestClient().toXml(attribute);
         System.out.println(xml);
 
+        new XStreamTestClient().toXmlFile(attribute);
     }
 
     public String toXml(Attributes attributes) {
@@ -61,5 +66,31 @@ public class XStreamTestClient {
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xStream.toXML(root);
         return xml;
+    }
+
+    public void toXmlFile(Attributes attributes) throws IOException {
+        Root root = new Root();
+        root.setAttributes(attributes);
+
+        XStream xStream = new XStream();
+        xStream.alias("Root", Root.class);
+
+        xStream.alias("PolicyNumbers", PolicyNumbers.class);
+        xStream.addImplicitCollection(Attributes.class, "PolicyNumbers");
+
+        xStream.alias("ProposalNums", ProposalNums.class);
+        xStream.addImplicitCollection(Attributes.class, "ProposalNums");
+
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xStream.toXML(root);
+
+        String path = "D:/xml";
+        String fileName = "07000H.xml";
+        File file = new File(path + "/" + fileName);
+
+        try {
+            FileUtils.writeStringToFile(file, xml, "UTF-8");
+        } catch (IOException e) {
+            throw e;
+        }
     }
 }
