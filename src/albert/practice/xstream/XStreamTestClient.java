@@ -1,12 +1,13 @@
 package albert.practice.xstream;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -100,24 +101,17 @@ public class XStreamTestClient {
         }
     }
 
-    // TODO not finish yet. check Java Advanced Imaging (JAI) API
+    // TODO not finish yet.
+    // https://www.developerfeed.com/how-convert-base64-encoded-stream-image-using-java/
     public void toXmlTiffFile(String xml) throws IOException {
         System.out.println("xml=" + xml);
         String path = "D:/xml";
         String tiffFile = "07000H.tiff";
 
-        OutputStream outputStream = null;
         byte[] imageInByteArray = Base64.decodeBase64(xml);
-        System.out.println("imageInByteArray=" + imageInByteArray.length);
-        try {
-            outputStream = new FileOutputStream(path + "/" + tiffFile);
-            outputStream.write(imageInByteArray);
-        } catch (FileNotFoundException e) {
-            throw e;
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            outputStream.close();
-        }
+
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageInByteArray));
+        File f = new File(path + "/" + tiffFile);
+        ImageIO.write(image, "tiff", f);
     }
 }
