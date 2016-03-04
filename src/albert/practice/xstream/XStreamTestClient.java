@@ -1,10 +1,14 @@
 package albert.practice.xstream;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
 import albert.practice.xstream.beans.Attributes;
@@ -49,6 +53,8 @@ public class XStreamTestClient {
         System.out.println(xml);
 
         new XStreamTestClient().toXmlFile(attribute);
+
+        new XStreamTestClient().toXmlTiffFile(xml);
     }
 
     public String toXml(Attributes attributes) {
@@ -91,6 +97,27 @@ public class XStreamTestClient {
             FileUtils.writeStringToFile(file, xml, "UTF-8");
         } catch (IOException e) {
             throw e;
+        }
+    }
+
+    // TODO not finish yet
+    public void toXmlTiffFile(String xml) throws IOException {
+        System.out.println("xml=" + xml);
+        String path = "D:/xml";
+        String tiffFile = "07000H.tiff";
+
+        OutputStream outputStream = null;
+        byte[] imageInByteArray = Base64.decodeBase64(xml);
+        System.out.println("imageInByteArray=" + imageInByteArray.length);
+        try {
+            outputStream = new FileOutputStream(path + "/" + tiffFile);
+            outputStream.write(imageInByteArray);
+        } catch (FileNotFoundException e) {
+            throw e;
+        } catch (IOException e) {
+            throw e;
+        } finally {
+            outputStream.close();
         }
     }
 }
