@@ -100,7 +100,7 @@ public class XStreamTestClient {
         }
     }
 
-    // TODO not finish yet
+    // TODO not finish yet. check Java Advanced Imaging (JAI) API
     public void toXmlTiffFile(String xml) throws IOException {
         System.out.println("xml=" + xml);
         String path = "D:/xml";
