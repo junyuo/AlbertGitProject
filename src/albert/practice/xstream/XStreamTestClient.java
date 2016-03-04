@@ -41,8 +41,14 @@ public class XStreamTestClient {
 
         attribute.setProposalNums(proposalNumList);
 
+        String xml = new XStreamTestClient().toXml(attribute);
+        System.out.println(xml);
+
+    }
+
+    public String toXml(Attributes attributes) {
         Root root = new Root();
-        root.setAttributes(attribute);
+        root.setAttributes(attributes);
 
         XStream xStream = new XStream();
         xStream.alias("Root", Root.class);
@@ -54,7 +60,6 @@ public class XStreamTestClient {
         xStream.addImplicitCollection(Attributes.class, "ProposalNums");
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xStream.toXML(root);
-        System.out.println(xml);
-
+        return xml;
     }
 }
