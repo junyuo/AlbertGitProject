@@ -1,5 +1,6 @@
 package albert.practice.file;
 
+//media type list: http://www.iana.org/assignments/media-types/media-types.xhtml
 public class MediaTypes {
 
 	public static final String DOC = "application/msword";
