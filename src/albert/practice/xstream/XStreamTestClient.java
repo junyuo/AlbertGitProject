@@ -15,7 +15,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
 import com.thoughtworks.xstream.XStream;
@@ -123,9 +122,9 @@ public class XStreamTestClient {
 
 		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = img.createGraphics();
+
 		Font font = new Font("Arial", Font.PLAIN, 12);
 		g2d.setFont(font);
-
 		g2d.dispose();
 
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -163,6 +162,7 @@ public class XStreamTestClient {
 		}
 
 		g2d.dispose();
+
 		try {
 			// only support jpg, gif, png
 			ImageIO.write(img, "png", file);
@@ -175,11 +175,4 @@ public class XStreamTestClient {
 
 	}
 
-	public String encodeImage(byte[] imageByteArray) {
-		return Base64.encodeBase64URLSafeString(imageByteArray);
-	}
-
-	public byte[] decodeImage(String imageDataString) {
-		return Base64.decodeBase64(imageDataString);
-	}
 }
