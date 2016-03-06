@@ -1,13 +1,21 @@
 package albert.practice.xstream;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
 import com.thoughtworks.xstream.XStream;
@@ -100,15 +108,78 @@ public class XStreamTestClient {
 		}
 	}
 
-	// TODO not finish yet.
-	// https://www.developerfeed.com/how-convert-base64-encoded-stream-image-using-java/
+	// http://stackoverflow.com/questions/27658986/how-to-convert-multi-line-text-to-image-using-java
 	public void toXmlTiffFile(String xml) throws IOException {
 		System.out.println("xml=" + xml);
+
 		String path = "/Users/albert/Documents/test";
-		String tiffFile = "07000H.tiff";
+		String tiffFile = "07000H.png";
+		String xmlFile = "07000H.xml";
 
-		BufferedImage bImage = ImageIO.read(new File("/Users/albert/Documents/test/07000H.xml"));
-		ImageIO.write(bImage, "tiff", new File(path + "/" + tiffFile));
+		File file = new File(path + "/" + tiffFile);
 
+		int width = 1000;
+		int height = 1000;
+
+		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = img.createGraphics();
+		Font font = new Font("Arial", Font.PLAIN, 12);
+		g2d.setFont(font);
+
+		g2d.dispose();
+
+		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		g2d = img.createGraphics();
+		g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+		g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		g2d.setFont(font);
+		g2d.setColor(Color.BLACK);
+
+		BufferedReader br = null;
+		int nextLinePosition = 25;
+		int fontSize = 12;
+		try {
+			br = new BufferedReader(new FileReader(new File(path + "/" + xmlFile)));
+			String line;
+			while ((line = br.readLine()) != null) {
+				g2d.drawString(line, 0, nextLinePosition);
+				nextLinePosition = nextLinePosition + fontSize;
+			}
+
+		} catch (FileNotFoundException ex) {
+			throw ex;
+		} catch (IOException ex) {
+			throw ex;
+		} finally {
+			if (br != null) {
+				br.close();
+			}
+		}
+
+		g2d.dispose();
+		try {
+			// only support jpg, gif, png
+			ImageIO.write(img, "png", file);
+		} catch (IOException ex) {
+			throw ex;
+		}
+
+		// copy from png to tiff
+		FileUtils.copyFile(file, new File(path + "/07000H.tiff"));
+
+	}
+
+	public String encodeImage(byte[] imageByteArray) {
+		return Base64.encodeBase64URLSafeString(imageByteArray);
+	}
+
+	public byte[] decodeImage(String imageDataString) {
+		return Base64.decodeBase64(imageDataString);
 	}
 }
