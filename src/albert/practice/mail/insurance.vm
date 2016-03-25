@@ -1,0 +1,13 @@
+<p>親愛的保戶您好</p>
+<p>     </p>
+<p>感謝您對xxxx的支持，您在網路上申請的旅平險保單已投保完成，以下是您的投保明細，供您參考。</p>
+<p>【投保內容】</p>
+<p>保單號碼: ${customer.policyNumber}</p>
+<p>被保險人: ${customer.name}</p>
+<p>申請日期: ${customer.applyDate}</p>
+<p>保險期間: ${customer.fromDate} ~ ${customer.toDate}</p>
+<p>旅遊地點: ${customer.place}</p>
+<p></p>
+<p>※保險單及保險費送金單將於近日內寄至要保人所指定之聯絡地址。</p>
+<p></p>
+<p>                     敬祝  闔家平安 </p>
