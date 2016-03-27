@@ -152,7 +152,6 @@ public class MailTest {
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		sender.send(message);
