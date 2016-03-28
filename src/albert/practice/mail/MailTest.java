@@ -2,7 +2,9 @@ package albert.practice.mail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,141 +22,221 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import albert.practice.mail.params.EmailParams;
+
 public class MailTest {
 
-	private ApplicationContext context;
-	private VelocityEngine velocityEngine;
+    public static void main(String[] args) throws IOException, MessagingException {
 
-	public static void main(String[] args) {
-		new MailTest().testMail2();
-	}
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring-beans.xml");
+        VelocityEngine velocityEngine = (VelocityEngine) context.getBean("velocityEngine");
 
-	private void testMail1() {
-		Properties props = new Properties();
-		props.put("mail.smtp.starttls.enable", "true");
+        // set value to template
+        Customer customer = new Customer();
+        customer.setPolicyNumber("12345678");
+        customer.setName("測試");
+        customer.setApplyDate("20160325");
+        customer.setFromDate("20160401");
+        customer.setToDate("20160410");
+        customer.setPlace("日本關西");
 
-		String host = "smtp.gmail.com";
-		int port = 587;
-		String userName = "xxx";
-		String password = "xxxx";
+        // set customer to map for velocity email template
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("customer", customer);
 
-		String mailTo = "xxx@gmail.com";
-		String subject = "網路投保完成通知";
+        // get email content from velocity email template
+        String mailTemplate = "albert/practice/mail/templates/insurance.vm";
+        String content = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mailTemplate,
+                "UTF-8", model);
 
-		JavaMailSenderImpl sender = new JavaMailSenderImpl();
-		sender.setJavaMailProperties(props);
-		sender.setHost(host);
-		sender.setPort(port);
-		sender.setUsername(userName);
-		sender.setPassword(password);
+        System.out.println("content=" + content);
 
-		// set email default encoding
-		sender.setDefaultEncoding("UTF-8");
+        // set file attachments
+        File pdfFile = new File("D://dropbox//Getting Started.pdf");
+        File mindmapFile = new File("D://dropbox//eBooks//The Intelligent Investor.png");
 
-		String content = "<p>親愛的客戶您好:</p>";
-		content += "<p>您的網路申請驗證碼為<font color='red'>12345</font>，僅限會員申請使用，請於收到e-mail <font color='red'>10分鐘內完成驗證，10分鐘後將自動失效</font></p>";
-		content += "<p>XXXX敬上</p>";
+        List<File> attachments = new ArrayList<File>();
+        attachments.add(pdfFile);
+        attachments.add(mindmapFile);
 
-		MimeMessage message = sender.createMimeMessage();
-		try {
+        // set email parameters
+        EmailParams params = new EmailParams();
+        params.setReceiverEmail("junyuo@gmail.com");
+        params.setSubject("網路投保完成通知");
+        params.setContent(content);
+        params.setAttachments(attachments);
 
-			MimeMessageHelper helper;
-			helper = new MimeMessageHelper(message, true);
-			helper.setTo(mailTo);
-			helper.setSubject(subject);
+        new MailTest().sendMail(params);
 
-			// true means it is a html format email
-			helper.setText(content, true);
+        // new MailTest().testMail2();
+    }
 
-			FileSystemResource panda01 = new FileSystemResource(new File("D://dropbox//picture//201602011033331.png"));
-			helper.addInline("pand01", panda01);
+    public void sendMail(EmailParams params) {
+        JavaMailSenderImpl sender = getJavaMailSender();
+        MimeMessage message = sender.createMimeMessage();
 
-			FileSystemResource panda02 = new FileSystemResource(new File("D://dropbox//picture//panda.png"));
-			helper.addInline("panda02", panda02);
+        List<File> attachemtns = null;
 
-		} catch (MessagingException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(params.getReceiverEmail());
+            helper.setSubject(params.getSubject());
+            helper.setText(params.getContent(), true);
 
-		sender.send(message);
-		System.out.println("mail sent..");
-	}
+            if (params.getAttachments() != null && params.getAttachments().size() > 0) {
+                attachemtns = params.getAttachments();
+                for (int i = 0; i < attachemtns.size(); i++) {
+                    FileSystemResource attachment = new FileSystemResource(attachemtns.get(i));
+                    helper.addInline("attachment" + i, attachment);
+                }
+            }
 
-	// http://www.codingpedia.org/ama/how-to-compose-html-emails-in-java-with-spring-and-velocity/
-	// http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
-	// http://openhome.cc/Gossip/SpringGossip/AttachedFileMail.html
-	private void testMail2() {
-		// enable starttls
-		Properties props = new Properties();
-		props.put("mail.smtp.starttls.enable", "true");
+            InputStreamSource logo = new ByteArrayResource(IOUtils.toByteArray(getClass()
+                    .getResourceAsStream("img/panda.png")));
+            helper.addInline("panda", logo, "image/png");
 
-		// mail server configuration
-		String host = "smtp.gmail.com";
-		int port = 587;
-		String userName = "xxx";
-		String password = "xxx";
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        sender.send(message);
+        System.out.println("mail sent..");
+    }
 
-		String mailTo = "xxx@gmail.com";
-		String subject = "網路投保完成通知";
+    private void testMail1() {
+        Properties props = new Properties();
+        props.put("mail.smtp.starttls.enable", "true");
 
-		JavaMailSenderImpl sender = new JavaMailSenderImpl();
-		sender.setJavaMailProperties(props);
-		sender.setHost(host);
-		sender.setPort(port);
-		sender.setUsername(userName);
-		sender.setPassword(password);
-		sender.setDefaultEncoding("UTF-8");
+        String host = "smtp.gmail.com";
+        int port = 587;
+        String userName = "xxx";
+        String password = "xxxx";
 
-		context = new ClassPathXmlApplicationContext("spring-beans.xml");
-		velocityEngine = (VelocityEngine) context.getBean("velocityEngine");
+        String mailTo = "xxx@gmail.com";
+        String subject = "網路投保完成通知";
 
-		// set value to template
-		Customer customer = new Customer();
-		customer.setPolicyNumber("12345678");
-		customer.setName("測試");
-		customer.setApplyDate("20160325");
-		customer.setFromDate("20160401");
-		customer.setToDate("20160410");
-		customer.setPlace("日本關西");
+        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        sender.setJavaMailProperties(props);
+        sender.setHost(host);
+        sender.setPort(port);
+        sender.setUsername(userName);
+        sender.setPassword(password);
 
-		// set customer to map
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("customer", customer);
+        // set email default encoding
+        sender.setDefaultEncoding("UTF-8");
 
-		MimeMessage message = sender.createMimeMessage();
-		try {
+        String content = "<p>親愛的客戶您好:</p>";
+        content += "<p>您的網路申請驗證碼為<font color='red'>12345</font>，僅限會員申請使用，請於收到e-mail <font color='red'>10分鐘內完成驗證，10分鐘後將自動失效</font></p>";
+        content += "<p>XXXX敬上</p>";
 
-			String mailTemplate = "albert/practice/mail/insurance.vm";
+        MimeMessage message = sender.createMimeMessage();
+        try {
 
-			String pdfFile = "/Users/albert/Dropbox/Getting Started.pdf";
-			// String pngFile = "/Users/albert/Dropbox/picture/panda.png";
+            MimeMessageHelper helper;
+            helper = new MimeMessageHelper(message, true);
+            helper.setTo(mailTo);
+            helper.setSubject(subject);
 
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-			helper.setTo(mailTo);
-			helper.setSubject(subject);
+            // true means it is a html format email
+            helper.setText(content, true);
 
-			// get template string
-			String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mailTemplate, "UTF-8", model);
+            FileSystemResource panda01 = new FileSystemResource(new File(
+                    "D://dropbox//picture//201602011033331.png"));
+            helper.addInline("pand01", panda01);
 
-			// true means it is a html format email
-			helper.setText(text, true);
+            FileSystemResource panda02 = new FileSystemResource(new File(
+                    "D://dropbox//picture//panda.png"));
+            helper.addInline("panda02", panda02);
 
-			InputStreamSource logo = new ByteArrayResource(
-					IOUtils.toByteArray(getClass().getResourceAsStream("img/panda.png")));
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
 
-			FileSystemResource pdf = new FileSystemResource(new File(pdfFile));
-			// FileSystemResource png = new FileSystemResource(new
-			// File(pngFile));
+        sender.send(message);
+        System.out.println("mail sent..");
+    }
 
-			helper.addInline("pdf", pdf);
-			helper.addInline("panda", logo, "image/png");
+    private JavaMailSenderImpl getJavaMailSender() {
+        // enable starttls
+        Properties props = new Properties();
+        props.put("mail.smtp.starttls.enable", "true");
 
-		} catch (MessagingException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		sender.send(message);
-		System.out.println("mail sent..");
-	}
+        // mail server configuration
+        String host = "smtp.gmail.com";
+        int port = 587;
+        String userName = "xxx";
+        String password = "xxx";
+
+        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        sender.setJavaMailProperties(props);
+        sender.setHost(host);
+        sender.setPort(port);
+        sender.setUsername(userName);
+        sender.setPassword(password);
+        sender.setDefaultEncoding("UTF-8");
+
+        return sender;
+    }
+
+    // http://www.codingpedia.org/ama/how-to-compose-html-emails-in-java-with-spring-and-velocity/
+    // http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
+    // http://openhome.cc/Gossip/SpringGossip/AttachedFileMail.html
+    private void testMail2() throws IOException, MessagingException {
+
+        JavaMailSenderImpl sender = getJavaMailSender();
+
+        String mailTo = "xxx@gmail.com";
+        String subject = "網路投保完成通知";
+
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring-beans.xml");
+        VelocityEngine velocityEngine = (VelocityEngine) context.getBean("velocityEngine");
+
+        // set value to template
+        Customer customer = new Customer();
+        customer.setPolicyNumber("12345678");
+        customer.setName("測試");
+        customer.setApplyDate("20160325");
+        customer.setFromDate("20160401");
+        customer.setToDate("20160410");
+        customer.setPlace("日本關西");
+
+        // set customer to map
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("customer", customer);
+
+        MimeMessage message = sender.createMimeMessage();
+        try {
+
+            String mailTemplate = "albert/practice/mail/templates/insurance.vm";
+
+            String pdfFile = "D://dropbox//Getting Started.pdf";
+
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(mailTo);
+            helper.setSubject(subject);
+
+            // get template string
+            String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mailTemplate,
+                    "UTF-8", model);
+
+            // true means it is a html format email
+            helper.setText(text, true);
+
+            InputStreamSource logo = new ByteArrayResource(IOUtils.toByteArray(getClass()
+                    .getResourceAsStream("img/panda.png")));
+
+            FileSystemResource pdf = new FileSystemResource(new File(pdfFile));
+
+            helper.addInline("pdf", pdf);
+            helper.addInline("panda", logo, "image/png");
+
+        } catch (MessagingException e) {
+            throw e;
+        } catch (IOException e) {
+            throw e;
+        }
+        sender.send(message);
+        System.out.println("mail sent..");
+    }
 }
