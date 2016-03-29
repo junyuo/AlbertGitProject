@@ -1,7 +1,9 @@
 package albert.practice.mail;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Properties;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +25,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import albert.practice.file.FileBase64Util;
+import albert.practice.mail.params.Attachment;
 import albert.practice.mail.params.EmailParams;
 
 public class MailTest {
@@ -49,8 +54,6 @@ public class MailTest {
         String content = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mailTemplate,
                 "UTF-8", model);
 
-        System.out.println("content=" + content);
-
         // set file attachments
         File pdfFile = new File("D://dropbox//Getting Started.pdf");
         File mindmapFile = new File("D://dropbox//eBooks//The Intelligent Investor.png");
@@ -61,13 +64,46 @@ public class MailTest {
 
         // set email parameters
         EmailParams params = new EmailParams();
-        params.setReceiverEmail("junyuo@gmail.com");
+        params.setReceiverEmail("xxx@gmail.com");
         params.setSubject("網路投保完成通知");
         params.setContent(content);
         params.setAttachments(attachments);
 
-        new MailTest().sendMail(params);
+        // new MailTest().sendMail(params);
 
+        File source1 = new File("D://dropbox/test.pdf");
+        InputStream sourcetStream1 = null;
+
+        sourcetStream1 = new FileInputStream(source1);
+        byte[] encodedSource1 = FileBase64Util.encode(IOUtils.toByteArray(sourcetStream1));
+
+        Attachment attachment1 = new Attachment();
+        attachment1.setFileName("測試.pdf");
+        attachment1.setBytes(encodedSource1);
+
+        File source2 = new File("D://dropbox/FMS 資料來源.pptx");
+        InputStream sourcetStream2 = null;
+
+        sourcetStream2 = new FileInputStream(source1);
+        byte[] encodedSource2 = FileBase64Util.encode(IOUtils.toByteArray(sourcetStream2));
+
+        Attachment attachment2 = new Attachment();
+        attachment2.setFileName("FMS 資料來源2.pptx");
+        attachment2.setBytes(encodedSource2);
+
+        List<Attachment> encodedAttachment = new ArrayList<Attachment>();
+        encodedAttachment.add(attachment1);
+        encodedAttachment.add(attachment2);
+
+        params.setEncodedBytes(encodedAttachment);
+
+        if (sourcetStream1 != null) {
+            sourcetStream1.close();
+        }
+
+        new MailTest().sendMail2(params);
+
+        // new MailTest().sendMail2(params);
         // new MailTest().testMail2();
     }
 
@@ -87,7 +123,7 @@ public class MailTest {
                 attachemtns = params.getAttachments();
                 for (int i = 0; i < attachemtns.size(); i++) {
                     FileSystemResource attachment = new FileSystemResource(attachemtns.get(i));
-                    helper.addInline("attachment" + i, attachment);
+                    helper.addAttachment(attachemtns.get(i).getName(), attachment);
                 }
             }
 
@@ -101,6 +137,44 @@ public class MailTest {
             throw new RuntimeException(e);
         }
         sender.send(message);
+        System.out.println("mail sent..");
+    }
+
+    public void sendMail2(EmailParams params) {
+        System.out.println("sendMail2....");
+        JavaMailSenderImpl sender = getJavaMailSender();
+        MimeMessage message = sender.createMimeMessage();
+        List<Attachment> attachments = null;
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(params.getReceiverEmail());
+            helper.setSubject(params.getSubject());
+            helper.setText(params.getContent(), true);
+
+            if (params.getAttachments() != null && params.getAttachments().size() > 0) {
+                attachments = params.getEncodedBytes();
+                for (int i = 0; i < attachments.size(); i++) {
+                    Attachment attachment = attachments.get(i);
+                    byte[] bytes = FileBase64Util.decode(attachment.getBytes());
+                    File file = new File("D://dropbox/" + attachment.getFileName());
+                    FileUtils.writeByteArrayToFile(file, bytes);
+                    helper.addAttachment(attachment.getFileName(), file);
+                }
+            }
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        sender.send(message);
+
+        if (params.getAttachments() != null && params.getAttachments().size() > 0) {
+            for (int i = 0; i < attachments.size(); i++) {
+                Attachment attachment = attachments.get(i);
+                FileUtils.deleteQuietly(new File("D://dropbox/" + attachment.getFileName()));
+            }
+        }
         System.out.println("mail sent..");
     }
 
