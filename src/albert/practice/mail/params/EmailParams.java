@@ -19,6 +19,7 @@ public class EmailParams implements Serializable {
     private String content; // 內文 (必填)
     private List<Attachment> encodedBytes; // encoded base64
     private List<File> attachments; // 附加檔案 (非必填)
+    private List<Attachment> attachmentsForMcDe; // 附加檔案 (非必填)
 
     public String getReceiverEmail() {
         return receiverEmail;
