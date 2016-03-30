@@ -25,7 +25,7 @@ public class FileBase64Util {
             byte[] decodedSource = FileBase64Util.decode(encodedSource);
             System.out.println("decode successfully....");
 
-            FileUtils.writeByteArrayToFile(new File("D://dropbox/test_decode.pdf"), decodedSource);
+            FileUtils.writeByteArrayToFile(new File("D://dropbox/new_test.pdf"), decodedSource);
             System.out.println("write to new file");
 
         } catch (FileNotFoundException e) {
