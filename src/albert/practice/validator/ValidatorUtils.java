@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 public class ValidatorUtils {
 
-    public Boolean isValidEmail(String email) {
+    public Boolean isEmailValid(String email) {
         Boolean isValid = Boolean.FALSE;
 
         Pattern EMAIL_PATTERN = Pattern.compile("^\\w+\\.*\\w+@(\\w+\\.){1,5}[a-zA-Z]{2,3}$");
@@ -15,7 +15,7 @@ public class ValidatorUtils {
         return isValid;
     }
 
-    public Boolean isValidPhoneNumber(String mobilePhoneNumber) {
+    public Boolean isPhoneNumberValid(String mobilePhoneNumber) {
         Boolean isValid = Boolean.FALSE;
 
         Pattern MSISDN_PATTERN = Pattern.compile("[+-]?\\d{10,12}");
@@ -36,10 +36,10 @@ public class ValidatorUtils {
         String validPhoneNum = "0912123456";
         String invalidPhoneNum = "091212345";
 
-        System.out.println(validator.isValidEmail(validEmail));
-        System.out.println(validator.isValidEmail(invalidEmail));
-        System.out.println(validator.isValidPhoneNumber(validPhoneNum));
-        System.out.println(validator.isValidPhoneNumber(invalidPhoneNum));
+        System.out.println(validator.isEmailValid(validEmail));
+        System.out.println(validator.isEmailValid(invalidEmail));
+        System.out.println(validator.isPhoneNumberValid(validPhoneNum));
+        System.out.println(validator.isPhoneNumberValid(invalidPhoneNum));
 
     }
 }
