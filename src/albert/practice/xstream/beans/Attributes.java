@@ -7,92 +7,91 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 public class Attributes implements Serializable {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    private String WorkLoad;
 
-    private String DetailDocCat;
+	private static final long serialVersionUID = 1L;
 
-    private String ScanDate;
+	private String WorkLoad;
 
-    private String ScanTime;
+	private String DetailDocCat;
 
-    private String StockingNumber;
+	private String ScanDate;
 
-    private String CaseId;
+	private String ScanTime;
 
-    private List<PolicyNumbers> PolicyNumbers;
+	private String StockingNumber;
 
-    private List<ProposalNums> ProposalNums;
+	private String CaseId;
 
-    public String getWorkLoad() {
-        return WorkLoad;
-    }
+	private List<PolicyNumbers> PolicyNumbers;
 
-    public void setWorkLoad(String WorkLoad) {
-        this.WorkLoad = WorkLoad;
-    }
+	private List<ProposalNums> ProposalNums;
 
-    public String getDetailDocCat() {
-        return DetailDocCat;
-    }
+	public String getWorkLoad() {
+		return WorkLoad;
+	}
 
-    public void setDetailDocCat(String DetailDocCat) {
-        this.DetailDocCat = DetailDocCat;
-    }
+	public void setWorkLoad(String WorkLoad) {
+		this.WorkLoad = WorkLoad;
+	}
 
-    public String getStockingNumber() {
-        return StockingNumber;
-    }
+	public String getDetailDocCat() {
+		return DetailDocCat;
+	}
 
-    public void setStockingNumber(String StockingNumber) {
-        this.StockingNumber = StockingNumber;
-    }
+	public void setDetailDocCat(String DetailDocCat) {
+		this.DetailDocCat = DetailDocCat;
+	}
 
-    public List<PolicyNumbers> getPolicyNumbers() {
-        return PolicyNumbers;
-    }
+	public String getStockingNumber() {
+		return StockingNumber;
+	}
 
-    public void setPolicyNumbers(List<PolicyNumbers> policyNumbers) {
-        PolicyNumbers = policyNumbers;
-    }
+	public void setStockingNumber(String StockingNumber) {
+		this.StockingNumber = StockingNumber;
+	}
 
-    public String getCaseId() {
-        return CaseId;
-    }
+	public List<PolicyNumbers> getPolicyNumbers() {
+		return PolicyNumbers;
+	}
 
-    public void setCaseId(String CaseId) {
-        this.CaseId = CaseId;
-    }
+	public void setPolicyNumbers(List<PolicyNumbers> policyNumbers) {
+		PolicyNumbers = policyNumbers;
+	}
 
-    public String getScanDate() {
-        return ScanDate;
-    }
+	public String getCaseId() {
+		return CaseId;
+	}
 
-    public void setScanDate(String ScanDate) {
-        this.ScanDate = ScanDate;
-    }
+	public void setCaseId(String CaseId) {
+		this.CaseId = CaseId;
+	}
 
-    public String getScanTime() {
-        return ScanTime;
-    }
+	public String getScanDate() {
+		return ScanDate;
+	}
 
-    public void setScanTime(String ScanTime) {
-        this.ScanTime = ScanTime;
-    }
+	public void setScanDate(String ScanDate) {
+		this.ScanDate = ScanDate;
+	}
 
-    public List<ProposalNums> getProposalNums() {
-        return ProposalNums;
-    }
+	public String getScanTime() {
+		return ScanTime;
+	}
 
-    public void setProposalNums(List<ProposalNums> proposalNums) {
-        ProposalNums = proposalNums;
-    }
+	public void setScanTime(String ScanTime) {
+		this.ScanTime = ScanTime;
+	}
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+	public List<ProposalNums> getProposalNums() {
+		return ProposalNums;
+	}
+
+	public void setProposalNums(List<ProposalNums> proposalNums) {
+		ProposalNums = proposalNums;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 }

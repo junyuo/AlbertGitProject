@@ -24,30 +24,21 @@ import albert.practice.xstream.beans.PolicyNumbers;
 import albert.practice.xstream.beans.ProposalNums;
 import albert.practice.xstream.beans.Root;
 
-/**
- * 預期產出結果 <Root> <Attributes> <WorkLoad>TW_NEWNBED</WorkLoad>
- * <DetailDocCat>PD-投資型商品要保書_OT通路</DetailDocCat> <ScanDate>2016/03/02</ScanDate>
- * <ScanTime>15:56:00</ScanTime> <StockingNumber>2016E000001</StockingNumber>
- * <CaseId>EDOC-201600100001</CaseId>
- * <PolicyNumbers> <PolicyNumber>C12345678</PolicyNumber> </PolicyNumbers>
- * <ProposalNums> <ProposalNum>A87654321</ProposalNum> </ProposalNums>
- * </Attributes> </Root>
- */
 public class XStreamTestClient {
 
 	public static void main(String[] args) throws IOException {
 
+		// create an instance of beans and populate its fields:
 		Attributes attribute = new Attributes();
 		attribute.setWorkLoad("TW_NEWNBED");
-		attribute.setDetailDocCat("PD-投資型商品要保書_OT通路");
+		attribute.setDetailDocCat("旅平險要保書");
 		attribute.setScanDate("2016/03/02");
 		attribute.setScanTime("15:56:00");
 		attribute.setStockingNumber("2016E000001");
-		attribute.setCaseId("EDOC-201600100001");
+		attribute.setCaseId("ABCD-201600100001");
 
 		List<PolicyNumbers> policyNumberList = new ArrayList<PolicyNumbers>();
 		policyNumberList.add(new PolicyNumbers("A12345678"));
-		// policyNumberList.add(new PolicyNumbers("AAA12345678"));
 
 		attribute.setPolicyNumbers(policyNumberList);
 
@@ -56,29 +47,35 @@ public class XStreamTestClient {
 
 		attribute.setProposalNums(proposalNumList);
 
-		String xml = new XStreamTestClient().toXml(attribute);
+		Root root = new Root();
+		root.setAttributes(attribute);
+
+		String xml = new XStreamTestClient().toXml(root);
 		System.out.println(xml);
 
-		new XStreamTestClient().toXmlFile(attribute);
+		// new XStreamTestClient().toXmlFile(attribute);
 
-		new XStreamTestClient().toXmlTiffFile(xml);
+		// new XStreamTestClient().toXmlTiffFile(xml);
 	}
 
-	public String toXml(Attributes attributes) {
-		Root root = new Root();
-		root.setAttributes(attributes);
+	public String toXml(Root root) {
 
+		// instantiate the XStream class
 		XStream xStream = new XStream();
+
+		// create an alias to the desired class:
 		xStream.alias("Root", Root.class);
-
 		xStream.alias("PolicyNumbers", PolicyNumbers.class);
-		xStream.addImplicitCollection(Attributes.class, "PolicyNumbers");
-
 		xStream.alias("ProposalNums", ProposalNums.class);
+
+		// whenever you have a collection which doesn't need to display it's
+		// root tag, you can map it as an implicit collection
+		xStream.addImplicitCollection(Attributes.class, "PolicyNumbers");
 		xStream.addImplicitCollection(Attributes.class, "ProposalNums");
 
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xStream.toXML(root);
-		return xml;
+		// String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		// xStream.toXML(root);
+		return xStream.toXML(root);
 	}
 
 	public void toXmlFile(Attributes attributes) throws IOException {
