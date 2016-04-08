@@ -17,7 +17,7 @@ public class XStreamTest2 {
         doc.setInsuredId("B123456789");
         doc.setFormId("A00123");
 
-        log.info("doc = " + doc.toString());
+        log.debug("doc = " + doc.toString());
 
         // Initializing XStream
         XStream xStream = new XStream();
