@@ -29,7 +29,7 @@ public class CollectionTest {
         // output collection for filtered data
         List<ComConfig> output = new ArrayList<ComConfig>();
 
-        test.checkConfigKey("smtp1", input, output);
+        test.checkConfigKey("smtp", input, output);
 
         log.debug("output = " + output.toString());
     }
