@@ -13,21 +13,27 @@ import org.apache.commons.io.IOUtils;
 public class FileBase64Util {
 
     public static void main(String[] args) throws IOException {
-        File source = new File("D://dropbox/test.pdf");
+        FileBase64Util util = new FileBase64Util();
+
+        String encodedString = util.getEncodeBase64String(new File("D://dropbox/test.pdf"));
+        System.out.println("encode successfully....");
+        System.out.println("encodedString = " + encodedString);
+
+        byte[] decodedSource = FileBase64Util.decode(encodedString.getBytes());
+        System.out.println("decode successfully....");
+
+        FileUtils.writeByteArrayToFile(new File("D://dropbox/new_test.pdf"), decodedSource);
+        System.out.println("write to new file");
+    }
+
+    public String getEncodeBase64String(File source) throws IOException {
         InputStream sourcetStream = null;
+        String encodedString = "";
         try {
             sourcetStream = new FileInputStream(source);
             byte[] bytes = IOUtils.toByteArray(sourcetStream);
-
             byte[] encodedSource = FileBase64Util.encode(bytes);
-            System.out.println("encode successfully....");
-
-            byte[] decodedSource = FileBase64Util.decode(encodedSource);
-            System.out.println("decode successfully....");
-
-            FileUtils.writeByteArrayToFile(new File("D://dropbox/new_test.pdf"), decodedSource);
-            System.out.println("write to new file");
-
+            encodedString = new String(encodedSource);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -37,7 +43,7 @@ public class FileBase64Util {
                 sourcetStream.close();
             }
         }
-
+        return encodedString;
     }
 
     public static byte[] encode(byte[] bytes) {
