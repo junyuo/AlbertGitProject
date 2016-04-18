@@ -34,12 +34,9 @@ public class ValidatorUtils {
     public Boolean isHtmlValid(String htmlString) {
         Boolean isValid = Boolean.FALSE;
 
-        Tidy tidy = new Tidy(); // obtain a new Tidy instance
+        Tidy tidy = new Tidy();
         StringWriter writer = new StringWriter();
         tidy.parse(new StringReader(htmlString), writer);
-        // tidy.setXHTML(false); // set desired config options using tidy setters
-        // InputStream inputStream = new ByteArrayInputStream(htmlString.getBytes());
-        // tidy.parse(inputStream, System.out); // run tidy, providing an input and output stream
         int errors = tidy.getParseErrors();
         if (errors == 0) {
             isValid = Boolean.TRUE;
