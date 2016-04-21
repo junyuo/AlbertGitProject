@@ -19,7 +19,7 @@ public class FileBase64Util {
         System.out.println("encode successfully....");
         System.out.println("encodedString = " + encodedString);
 
-        byte[] decodedSource = FileBase64Util.decode(encodedString.getBytes());
+        byte[] decodedSource = Base64.decodeBase64(encodedString.getBytes());
         System.out.println("decode successfully....");
 
         FileUtils.writeByteArrayToFile(new File("D://dropbox/new_test.pdf"), decodedSource);
@@ -32,7 +32,7 @@ public class FileBase64Util {
         try {
             sourcetStream = new FileInputStream(source);
             byte[] bytes = IOUtils.toByteArray(sourcetStream);
-            byte[] encodedSource = FileBase64Util.encode(bytes);
+            byte[] encodedSource = Base64.encodeBase64(bytes);
             encodedString = new String(encodedSource);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -46,12 +46,8 @@ public class FileBase64Util {
         return encodedString;
     }
 
-    public static byte[] encode(byte[] bytes) {
-        return Base64.encodeBase64(bytes);
-    }
-
-    public static byte[] decode(byte[] bytes) {
-        return Base64.decodeBase64(bytes);
+    public static byte[] decode(byte base64Data[]) {
+        return Base64.decodeBase64(base64Data);
     }
 
 }
