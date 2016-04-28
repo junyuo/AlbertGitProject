@@ -15,7 +15,9 @@ public class FileBase64Util {
     public static void main(String[] args) throws IOException {
         FileBase64Util util = new FileBase64Util();
 
-        String encodedString = util.getEncodeBase64String(new File("D://dropbox/test.pdf"));
+        File attachment = new File("D://dropbox/test.pdf");
+
+        String encodedString = util.getEncodeBase64String(attachment);
         System.out.println("encode successfully....");
         System.out.println("encodedString = " + encodedString);
 
