@@ -3,6 +3,10 @@ package albert.practice.file;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
+
+import javax.imageio.ImageIO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +25,7 @@ public class PdfFileToTif {
         String destination = "D:\\dropbox\\";
 
         PdfFileToTif test = new PdfFileToTif();
+        test.checkImageIoJarFile();
         test.convertPdfToTif(pdfFile, destination);
     }
 
@@ -34,6 +39,11 @@ public class PdfFileToTif {
         try {
             // load PDF document
             PDDocument document = PDDocument.load(pdfFile);
+
+            // Scans for plug-ins on the application class path, loads their service provider
+            // classes, and registers a service provider instance for each one found with the
+            // IIORegistry.
+            ImageIO.scanForPlugins();
 
             // create PDF renderer
             PDFRenderer renderer = new PDFRenderer(document);
@@ -69,4 +79,17 @@ public class PdfFileToTif {
         return isExisted;
     }
 
+    private void checkImageIoJarFile() {
+        try {
+            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
+                    .getResources("META-INF/services/javax.imageio.spi.ImageWriterSpi");
+            while (urls.hasMoreElements()) {
+                log.info("[convertToTiff] urls = " + urls.nextElement().toString());
+            }
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            throw new RuntimeException(e1);
+        }
+    }
 }
