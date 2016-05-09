@@ -13,11 +13,10 @@ import org.apache.commons.io.IOUtils;
 public class FileBase64Util {
 
     public static void main(String[] args) throws IOException {
-        FileBase64Util util = new FileBase64Util();
 
         File attachment = new File("D://dropbox/test.pdf");
 
-        String encodedString = util.getEncodeBase64String(attachment);
+        String encodedString = FileBase64Util.getEncodeBase64String(attachment);
         System.out.println("encode successfully....");
         System.out.println("encodedString = " + encodedString);
 
@@ -28,7 +27,7 @@ public class FileBase64Util {
         System.out.println("write to new file");
     }
 
-    public String getEncodeBase64String(File source) throws IOException {
+    public static String getEncodeBase64String(File source) throws IOException {
         InputStream sourcetStream = null;
         String encodedString = "";
         try {

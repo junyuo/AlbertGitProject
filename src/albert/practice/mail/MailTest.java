@@ -75,7 +75,7 @@ public class MailTest {
         InputStream sourcetStream1 = null;
 
         sourcetStream1 = new FileInputStream(source1);
-        byte[] encodedSource1 = FileBase64Util.encode(IOUtils.toByteArray(sourcetStream1));
+        byte[] encodedSource1 = FileBase64Util.getEncodeBase64String(source1).getBytes();
 
         Attachment attachment1 = new Attachment();
         attachment1.setFileName("測試.pdf");
@@ -85,7 +85,7 @@ public class MailTest {
         InputStream sourcetStream2 = null;
 
         sourcetStream2 = new FileInputStream(source1);
-        byte[] encodedSource2 = FileBase64Util.encode(IOUtils.toByteArray(sourcetStream2));
+        byte[] encodedSource2 = FileBase64Util.getEncodeBase64String(source1).getBytes();
 
         Attachment attachment2 = new Attachment();
         attachment2.setFileName("FMS 資料來源2.pptx");
