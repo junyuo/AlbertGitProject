@@ -67,8 +67,8 @@ public class SmsUtils {
 
             int responseCode = con.getResponseCode();
 
-            System.out.println("\nSending 'GET' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
+            log.debug("\nSending 'GET' request to URL : " + url);
+            log.debug("Response Code : " + responseCode);
 
             bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine = "";
