@@ -12,6 +12,8 @@ import org.codehaus.jackson.type.TypeReference;
 
 import lombok.extern.slf4j.Slf4j;
 
+//http://www.mkyong.com/java/how-to-convert-java-object-to-from-json-jackson/
+//https://stackoverflow.com/questions/28821715/java-lang-classcastexception-java-util-linkedhashmap-cannot-be-cast-to-com-test
 @Slf4j
 public class JacksonTest {
 
