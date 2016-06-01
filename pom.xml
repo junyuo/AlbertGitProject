@@ -173,7 +173,7 @@
 			<version>19.0</version>
 		</dependency>
 
-		<!-- json to object -->
+		<!-- json to object and object to json -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
