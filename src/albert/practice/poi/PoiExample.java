@@ -29,7 +29,7 @@ public class PoiExample {
 
     public static void main(String[] args) throws IOException {
 	PoiExample test = new PoiExample();
-	// test.writeExcel();
+	test.writeExcel();
 
 	test.readExcel(excelFile);
     }
