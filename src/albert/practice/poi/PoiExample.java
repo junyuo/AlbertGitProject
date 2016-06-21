@@ -64,12 +64,14 @@ public class PoiExample {
 		    String subject = row.getCell(1).getStringCellValue();
 		    String status = row.getCell(2).getStringCellValue();
 		    String priority = row.getCell(3).getStringCellValue();
+		    String notes = row.getCell(4).getStringCellValue();
 
 		    Issue issue = new Issue();
 		    issue.setId(id);
 		    issue.setSubject(subject);
 		    issue.setStatus(status);
 		    issue.setPriority(priority);
+		    issue.setNotes(notes);
 
 		    issues.add(issue);
 		}
@@ -118,7 +120,7 @@ public class PoiExample {
 	}
 
 	// 5. auto resize column width
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 5; i++) {
 	    sheet.autoSizeColumn(i);
 	}
 
@@ -158,6 +160,10 @@ public class PoiExample {
 	cell = headerRow.createCell(3);
 	cell.setCellValue("優先");
 	cell.setCellStyle(style);
+	
+	cell = headerRow.createCell(4);
+	cell.setCellValue("註解");
+	cell.setCellStyle(style);
     }
 
     private void writeDataForEachRow(Issue issue, Row row, CellStyle style) {
@@ -176,6 +182,10 @@ public class PoiExample {
 	cell = row.createCell(3);
 	cell.setCellValue(issue.getPriority());
 	cell.setCellStyle(style);
+	
+	cell = row.createCell(4);
+	cell.setCellValue(issue.getNotes());
+	cell.setCellStyle(style);
     }
 
     private CellStyle createCellStyle(Workbook workbook) {
@@ -190,9 +200,9 @@ public class PoiExample {
     }
 
     private List<Issue> createDummyIssues() {
-	Issue issue1 = new Issue(1, "查不到資料", "新建立", "正常");
-	Issue issue2 = new Issue(2, "新增時發生錯誤", "新建立", "高");
-	Issue issue3 = new Issue(3, "刪除失敗", "處理中", "高");
+	Issue issue1 = new Issue(1, "查不到資料", "新建立", "正常", "蜘蛛人(2016-05-26 17:05:00):\n這個提議不錯，來做吧！\n\n浩克(2016-05-26 17:05:00):\n測試無誤\n\n");
+	Issue issue2 = new Issue(2, "新增時發生錯誤", "新建立", "高", "");
+	Issue issue3 = new Issue(3, "刪除失敗", "處理中", "高", "");
 
 	return Arrays.asList(issue1, issue2, issue3);
     }

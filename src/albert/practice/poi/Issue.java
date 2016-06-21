@@ -21,4 +21,5 @@ public class Issue implements Serializable {
     private String subject;
     private String status;
     private String priority;
+    private String notes;
 }
