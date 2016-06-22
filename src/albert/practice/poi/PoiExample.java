@@ -38,12 +38,9 @@ public class PoiExample {
 
 	List<Issue> issues = new ArrayList<Issue>();
 
-	InputStream inputStream = null;
-	Workbook workbook = null;
-	try {
-	    // 1. Create a Workbook.
-	    inputStream = new FileInputStream(new File(excelFile));
-	    workbook = new HSSFWorkbook(inputStream);
+	try (InputStream inputStream = new FileInputStream(new File(excelFile));
+		// 1. Create a Workbook.
+		Workbook workbook = new HSSFWorkbook(inputStream);) {
 
 	    // 2. Get first sheet
 	    Sheet sheet = workbook.getSheetAt(0);
@@ -77,14 +74,7 @@ public class PoiExample {
 		}
 	    }
 	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} finally {
-	    if (inputStream != null) {
-		inputStream.close();
-	    }
-	    if (workbook != null) {
-		workbook.close();
-	    }
+	    throw e;
 	}
 
 	for (Issue issue : issues) {
@@ -99,48 +89,39 @@ public class PoiExample {
 	List<Issue> issues = createDummyIssues();
 
 	// 1. Create a Workbook.
-	Workbook workbook = new HSSFWorkbook();
+	try (Workbook workbook = new HSSFWorkbook()) {
+	    // 2. Create a Sheet.
+	    Sheet sheet = workbook.createSheet("issue list");
 
-	// 2. Create a Sheet.
-	Sheet sheet = workbook.createSheet("issue list");
+	    // 3. create cell style
+	    CellStyle style = createCellStyle(workbook);
 
-	// 3. create cell style
-	CellStyle style = createCellStyle(workbook);
+	    // 4. Repeat the following steps until all data is processed:
+	    // (1) Create a Row.
+	    // (2) Create Cells in a Row. Apply formatting using CellStyle.
+	    int rowCount = 0;
+	    Row headerRow = sheet.createRow(rowCount);
+	    writeHeader(headerRow, style);
 
-	// 4. Repeat the following steps until all data is processed:
-	// (1) Create a Row.
-	// (2) Create Cells in a Row. Apply formatting using CellStyle.
-	int rowCount = 0;
-	Row headerRow = sheet.createRow(rowCount);
-	writeHeader(headerRow, style);
-
-	for (Issue issue : issues) {
-	    Row row = sheet.createRow(++rowCount);
-	    writeDataForEachRow(issue, row, style);
-	}
-
-	// 5. auto resize column width
-	for (int i = 0; i < 5; i++) {
-	    sheet.autoSizeColumn(i);
-	}
-
-	// 6. Write to an OutputStream.
-	// 7. Close the output stream.
-	FileOutputStream outputStream = null;
-	try {
-	    outputStream = new FileOutputStream(excelFile);
-	    workbook.write(outputStream);
-
-	    log.debug("write issue data to excel file successfully");
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} finally {
-	    if (outputStream != null) {
-		outputStream.close();
+	    for (Issue issue : issues) {
+		Row row = sheet.createRow(++rowCount);
+		writeDataForEachRow(issue, row, style);
 	    }
-	    if (workbook != null) {
-		workbook.close();
+
+	    // 5. auto resize column width
+	    for (int i = 0; i < 5; i++) {
+		sheet.autoSizeColumn(i);
 	    }
+
+	    sheet.createFreezePane(0, 1);
+	    
+	    // 6. Write to an OutputStream.
+	    try (FileOutputStream outputStream = new FileOutputStream(excelFile);) {
+		workbook.write(outputStream);
+		log.debug("write issue data to excel file successfully");
+	    } catch (FileNotFoundException e) {
+		e.printStackTrace();
+	    } 
 	}
     }
 
@@ -160,7 +141,7 @@ public class PoiExample {
 	cell = headerRow.createCell(3);
 	cell.setCellValue("優先");
 	cell.setCellStyle(style);
-	
+
 	cell = headerRow.createCell(4);
 	cell.setCellValue("註解");
 	cell.setCellStyle(style);
@@ -182,7 +163,7 @@ public class PoiExample {
 	cell = row.createCell(3);
 	cell.setCellValue(issue.getPriority());
 	cell.setCellStyle(style);
-	
+
 	cell = row.createCell(4);
 	cell.setCellValue(issue.getNotes());
 	cell.setCellStyle(style);
@@ -200,7 +181,8 @@ public class PoiExample {
     }
 
     private List<Issue> createDummyIssues() {
-	Issue issue1 = new Issue(1, "查不到資料", "新建立", "正常", "蜘蛛人(2016-05-26 17:05:00):\n這個提議不錯，來做吧！\n\n浩克(2016-05-26 17:05:00):\n測試無誤\n\n");
+	Issue issue1 = new Issue(1, "查不到資料", "新建立", "正常",
+		"蜘蛛人(2016-05-26 17:05:00):\n這個提議不錯，來做吧！\n\n浩克(2016-05-26 17:05:00):\n測試無誤\n\n");
 	Issue issue2 = new Issue(2, "新增時發生錯誤", "新建立", "高", "");
 	Issue issue3 = new Issue(3, "刪除失敗", "處理中", "高", "");
 
