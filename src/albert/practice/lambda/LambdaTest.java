@@ -22,9 +22,11 @@ public class LambdaTest {
 	List<Person> result2 = test.findByLambdaEx1(dummyData);
 	log.debug("result1 = " + result1.toString());
 	log.debug("result2 = " + result2.toString());
-	
+
 	log.debug(test.findByApacheCommonsEx2(dummyData).toString());
 	log.debug(test.findByLambdaEx2(dummyData).toString());
+	
+	test.printCollection(dummyData);
     }
 
     @SuppressWarnings("unchecked")
@@ -57,15 +59,19 @@ public class LambdaTest {
     }
 
     private List<Person> findByLambdaEx1(List<Person> dummyData) {
-	return dummyData.stream()
-		.filter(person -> person.getAge() >= 25 && Gender.MALE.equals(person.getGender()))
+	return dummyData.stream().filter(person -> person.getAge() >= 25 && Gender.MALE.equals(person.getGender()))
 		.collect(Collectors.toList());
     }
 
     private Person findByLambdaEx2(List<Person> dummyData) {
-	Optional<Person> p = dummyData.stream()
-		.filter(person -> person.getAge() >= 25).findFirst();
+	Optional<Person> p = dummyData.stream().filter(person -> person.getAge() >= 25).findFirst();
 	return p.isPresent() ? p.get() : null;
+    }
+
+    private void printCollection(List<Person> dummyData) {
+	dummyData.forEach(person -> {
+	    log.debug("person = {}", person);
+	});
     }
 
     private List<Person> createDummyData() {
