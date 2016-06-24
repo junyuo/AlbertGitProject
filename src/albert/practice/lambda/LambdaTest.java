@@ -26,7 +26,9 @@ public class LambdaTest {
 	log.debug(test.findByApacheCommonsEx2(dummyData).toString());
 	log.debug(test.findByLambdaEx2(dummyData).toString());
 	
+	dummyData.sort((Person p1, Person p2) -> p1.getAge() - p2.getAge());
 	test.printCollection(dummyData);
+	
     }
 
     @SuppressWarnings("unchecked")
