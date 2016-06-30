@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 
 //http://www.codejava.net/coding/how-to-write-excel-files-in-java-using-apache-poi
@@ -27,11 +28,13 @@ public class PoiExample {
 
     private static String excelFile = "D:" + File.separator + "issue.xls";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 	PoiExample test = new PoiExample();
 	test.writeExcel();
 
-	test.readExcel(excelFile);
+	// test.readExcel(excelFile);
+	test.readExcelTest1(excelFile);
+	test.readExcelTest2(excelFile);
     }
 
     public List<Issue> readExcel(String excelFile) throws IOException {
@@ -77,9 +80,8 @@ public class PoiExample {
 	    throw e;
 	}
 
-	for (Issue issue : issues) {
-	    log.debug("issue = " + issue.toString());
-	}
+	// print collection
+	issues.stream().forEach(issue -> log.debug(issue.toString()));
 
 	return issues;
     }
@@ -114,14 +116,14 @@ public class PoiExample {
 	    }
 
 	    sheet.createFreezePane(0, 1);
-	    
+
 	    // 6. Write to an OutputStream.
 	    try (FileOutputStream outputStream = new FileOutputStream(excelFile);) {
 		workbook.write(outputStream);
 		log.debug("write issue data to excel file successfully");
 	    } catch (FileNotFoundException e) {
 		e.printStackTrace();
-	    } 
+	    }
 	}
     }
 
@@ -189,5 +191,118 @@ public class PoiExample {
 	return Arrays.asList(issue1, issue2, issue3);
     }
 
-}
+    private void readExcelTest1(String excelFile) throws IOException {
+	List<Issue> issues = new ArrayList<Issue>();
 
+	InputStream inputStream = null;
+	Workbook workbook = null;
+
+	try {
+	    // 1. Create a Workbook.
+	    inputStream = new FileInputStream(new File(excelFile));
+
+	    // 2. Get first sheet
+	    workbook = new HSSFWorkbook(inputStream);
+
+	    Sheet sheet = workbook.getSheetAt(0);
+
+	    // 3. Iterate through each rows from first sheet
+	    Iterator<Row> rowIterator = sheet.iterator();
+	    int rowCount = 1;
+	    while (rowIterator.hasNext()) {
+		// (1) ignore header row
+		if (rowCount == 1) {
+		    rowIterator.next();
+		    rowCount++;
+		}
+		// (2) start to read each row from second row
+		else {
+		    Row row = rowIterator.next();
+		    Integer id = Double.valueOf(row.getCell(0).getNumericCellValue()).intValue();
+		    String subject = row.getCell(1).getStringCellValue();
+		    String status = row.getCell(2).getStringCellValue();
+		    String priority = row.getCell(3).getStringCellValue();
+		    String notes = row.getCell(4).getStringCellValue();
+
+		    Issue issue = new Issue();
+		    issue.setId(id);
+		    issue.setSubject(subject);
+		    issue.setStatus(status);
+		    issue.setPriority(priority);
+		    issue.setNotes(notes);
+
+		    issues.add(issue);
+		}
+	    }
+
+	    // print collection
+	    issues.stream().forEach(issue -> log.debug(issue.toString()));
+	} catch (FileNotFoundException e) {
+	    throw e;
+	} catch (IOException e) {
+	    throw e;
+	} finally {
+	    if (workbook != null) {
+		workbook.close();
+	    }
+
+	    if (inputStream != null) {
+		inputStream.close();
+	    }
+	}
+    }
+
+    private void readExcelTest2(String excelFile) throws Exception {
+	try {
+	    // 1. Create a Workbook.
+	    @Cleanup
+	    InputStream inputStream = new FileInputStream(new File(excelFile));
+
+	    // 2. Get first sheet
+	    @Cleanup
+	    Workbook workbook = new HSSFWorkbook(inputStream);
+
+	    List<Issue> issues = new ArrayList<Issue>();
+
+	    Sheet sheet = workbook.getSheetAt(0);
+
+	    // 3. Iterate through each rows from first sheet
+	    Iterator<Row> rowIterator = sheet.iterator();
+	    int rowCount = 1;
+	    while (rowIterator.hasNext()) {
+		// (1) ignore header row
+		if (rowCount == 1) {
+		    rowIterator.next();
+		    rowCount++;
+		}
+		// (2) start to read each row from second row
+		else {
+		    Row row = rowIterator.next();
+		    Integer id = Double.valueOf(row.getCell(0).getNumericCellValue()).intValue();
+		    String subject = row.getCell(1).getStringCellValue();
+		    String status = row.getCell(2).getStringCellValue();
+		    String priority = row.getCell(3).getStringCellValue();
+		    String notes = row.getCell(4).getStringCellValue();
+
+		    Issue issue = new Issue();
+		    issue.setId(id);
+		    issue.setSubject(subject);
+		    issue.setStatus(status);
+		    issue.setPriority(priority);
+		    issue.setNotes(notes);
+
+		    issues.add(issue);
+		}
+	    }
+
+	    // print collection
+	    issues.stream().forEach(issue -> log.debug(issue.toString()));
+
+	} catch (FileNotFoundException e) {
+	    throw e;
+	} catch (Exception e) {
+	    throw e;
+	}
+    }
+
+}
