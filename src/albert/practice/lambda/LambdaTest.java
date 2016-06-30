@@ -1,6 +1,7 @@
 package albert.practice.lambda;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,20 +33,22 @@ public class LambdaTest {
 	dummyData.sort((Person p1, Person p2) -> p1.getAge() - p2.getAge());
 	log.debug("[sort by age]");
 	test.printCollection(dummyData);
-	
+
 	test.printOdds();
-	
+
 	String names = dummyData.stream().map(p -> p.getName()).collect(Collectors.joining(", "));
 	log.debug("names = " + names);
-	
-	Double averageAge = dummyData.stream()
-				.filter(p -> p.getGender().equals(Gender.MALE))
-				.mapToInt(p -> p.getAge()).average().getAsDouble();
+
+	Double averageAge = dummyData.stream().filter(p -> p.getGender().equals(Gender.MALE)).mapToInt(p -> p.getAge())
+		.average().getAsDouble();
 	log.debug("averageAge = " + averageAge);
-	
+
 	long numOfMale = dummyData.stream().filter(p -> p.getGender().equals(Gender.MALE)).count();
 	log.debug("numOfMale = " + numOfMale);
 	
+	
+	test.separatePlayersWithComma();
+	test.separatePlayersWithComma_usingJDK8();
     }
 
     @SuppressWarnings("unchecked")
@@ -109,6 +112,29 @@ public class LambdaTest {
 	}
 	List<Integer> oddNumbers = numbers.stream().filter(number -> number % 2 != 0).collect(Collectors.toList());
 	log.debug("OddNumbers = " + oddNumbers.toString());
+    }
+
+    private List<String> getDummyPlayers() {
+	return Arrays.asList("¤ý ¬f ¿Ä", "ªL ´¼ ³Ó", "ªL ªl ¨|", "½± ´¼ ½å", "°ª °ê ¼y");
+    }
+
+    private void separatePlayersWithComma(){
+	List<String> players =getDummyPlayers();
+	String playersWithComma = "";
+	for (int i = 0; i < players.size(); i++) {
+	    if (i == players.size() - 1) {
+		playersWithComma = playersWithComma + players.get(i);
+	    } else {
+		playersWithComma = playersWithComma + players.get(i) +", "; 
+	    }
+	}
+	log.debug("playersWithComma = " + playersWithComma);
+    }
+    
+    private void separatePlayersWithComma_usingJDK8(){
+	List<String> players =getDummyPlayers();
+	String playersWithComma = players.stream().collect(Collectors.joining(", "));
+	log.debug("playersWithComma = " + playersWithComma);
     }
 
 }
