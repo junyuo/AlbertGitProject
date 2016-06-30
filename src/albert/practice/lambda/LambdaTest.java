@@ -1,5 +1,6 @@
 package albert.practice.lambda;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,9 +26,25 @@ public class LambdaTest {
 
 	log.debug(test.findByApacheCommonsEx2(dummyData).toString());
 	log.debug(test.findByLambdaEx2(dummyData).toString());
-	
-	dummyData.sort((Person p1, Person p2) -> p1.getAge() - p2.getAge());
+
+	log.debug("[before sort]");
 	test.printCollection(dummyData);
+	dummyData.sort((Person p1, Person p2) -> p1.getAge() - p2.getAge());
+	log.debug("[sort by age]");
+	test.printCollection(dummyData);
+	
+	test.printOdds();
+	
+	String names = dummyData.stream().map(p -> p.getName()).collect(Collectors.joining(", "));
+	log.debug("names = " + names);
+	
+	Double averageAge = dummyData.stream()
+				.filter(p -> p.getGender().equals(Gender.MALE))
+				.mapToInt(p -> p.getAge()).average().getAsDouble();
+	log.debug("averageAge = " + averageAge);
+	
+	long numOfMale = dummyData.stream().filter(p -> p.getGender().equals(Gender.MALE)).count();
+	log.debug("numOfMale = " + numOfMale);
 	
     }
 
@@ -83,6 +100,15 @@ public class LambdaTest {
 	Person ben = new Person("Ben", Gender.MALE, 21, "ben@xxx.com");
 
 	return Lists.newArrayList(albert, mandy, curry, ben);
+    }
+
+    private void printOdds() {
+	List<Integer> numbers = new ArrayList<Integer>();
+	for (int i = 0; i <= 10; i++) {
+	    numbers.add(i);
+	}
+	List<Integer> oddNumbers = numbers.stream().filter(number -> number % 2 != 0).collect(Collectors.toList());
+	log.debug("OddNumbers = " + oddNumbers.toString());
     }
 
 }
