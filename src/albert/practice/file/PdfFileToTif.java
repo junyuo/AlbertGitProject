@@ -8,12 +8,13 @@ import java.util.Enumeration;
 
 import javax.imageio.ImageIO;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
+
+import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class PdfFileToTif {
@@ -21,50 +22,54 @@ public class PdfFileToTif {
     private final float dpi = 300f;
 
     public static void main(String[] args) {
-        File pdfFile = new File("D:\\dropbox\\Getting Started.pdf");
-        String destination = "D:\\dropbox\\";
+	File pdfFile = new File("D:\\dropbox\\Getting Started.pdf");
+	String destination = "D:\\dropbox\\";
 
-        PdfFileToTif test = new PdfFileToTif();
-        test.checkImageIoJarFile();
-        test.convertPdfToTif(pdfFile, destination);
+	PdfFileToTif test = new PdfFileToTif();
+	test.checkImageIoJarFile();
+	test.convertPdfToTif(pdfFile, destination);
     }
 
     public void convertPdfToTif(File pdfFile, String destination) {
-        if (!isFileExisted(pdfFile)) {
-            throw new RuntimeException("File not found ! (" + pdfFile.getAbsolutePath() + ")");
-        }
+	if (!isFileExisted(pdfFile)) {
+	    throw new RuntimeException("File not found ! (" + pdfFile.getAbsolutePath() + ")");
+	}
 
-        String pdfFileName = pdfFile.getName();
+	String pdfFileName = pdfFile.getName();
 
-        try {
-            // load PDF document
-            PDDocument document = PDDocument.load(pdfFile);
+	try {
+	    // load PDF document
+	    @Cleanup
+	    PDDocument document = PDDocument.load(pdfFile);
 
-            // Scans for plug-ins on the application class path, loads their service provider
-            // classes, and registers a service provider instance for each one found with the
-            // IIORegistry.
-            ImageIO.scanForPlugins();
+	    // Scans for plug-ins on the application class path, loads their
+	    // service provider
+	    // classes, and registers a service provider instance for each one
+	    // found with the
+	    // IIORegistry.
+	    ImageIO.scanForPlugins();
 
-            // create PDF renderer
-            PDFRenderer renderer = new PDFRenderer(document);
+	    // create PDF renderer
+	    PDFRenderer renderer = new PDFRenderer(document);
 
-            // go through each page of PDF, and generate TIF for each PDF page.
-            for (int i = 0; i < document.getNumberOfPages(); i++) {
-                // Returns the given page as an RGB image with 300 DPI.
-                BufferedImage image = renderer.renderImageWithDPI(i, dpi, ImageType.BINARY);
+	    // go through each page of PDF, and generate TIF for each PDF page.
+	    for (int i = 0; i < document.getNumberOfPages(); i++) {
+		// Returns the given page as an RGB image with 300 DPI.
+		BufferedImage image = renderer.renderImageWithDPI(i, dpi, ImageType.BINARY);
 
-                // Assign the file name of TIF
-                String fileName = pdfFileName + "_" + String.format("%02d", i + 1);
-                log.debug("Generating  " + fileName + ".tif to " + destination);
+		// Assign the file name of TIF
+		String fileName = pdfFileName + "_" + String.format("%02d", i + 1);
+		log.debug("Generating  " + fileName + ".tif to " + destination);
 
-                // Writes a buffered image to a file using the given image format.
-                ImageIOUtil.writeImage(image, destination + fileName + ".tif", Math.round(dpi));
-                image.flush();
-            }
-            log.debug("PDF to TIF conversion well done!");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		// Writes a buffered image to a file using the given image
+		// format.
+		ImageIOUtil.writeImage(image, destination + fileName + ".tif", Math.round(dpi));
+		image.flush();
+	    }
+	    log.debug("PDF to TIF conversion well done!");
+	} catch (IOException e) {
+	    throw new RuntimeException(e);
+	}
     }
 
     /**
@@ -74,22 +79,22 @@ public class PdfFileToTif {
      * @return true - 檔案存在; false - 檔案不存在
      */
     private Boolean isFileExisted(File file) {
-        Boolean isExisted = Boolean.FALSE;
-        isExisted = (file.exists() && (!file.isDirectory()));
-        return isExisted;
+	Boolean isExisted = Boolean.FALSE;
+	isExisted = (file.exists() && (!file.isDirectory()));
+	return isExisted;
     }
 
     private void checkImageIoJarFile() {
-        try {
-            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
-                    .getResources("META-INF/services/javax.imageio.spi.ImageWriterSpi");
-            while (urls.hasMoreElements()) {
-                log.info("[convertToTiff] urls = " + urls.nextElement().toString());
-            }
+	try {
+	    Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
+		    .getResources("META-INF/services/javax.imageio.spi.ImageWriterSpi");
+	    while (urls.hasMoreElements()) {
+		log.info("[convertToTiff] urls = " + urls.nextElement().toString());
+	    }
 
-        } catch (IOException e1) {
-            e1.printStackTrace();
-            throw new RuntimeException(e1);
-        }
+	} catch (IOException e1) {
+	    e1.printStackTrace();
+	    throw new RuntimeException(e1);
+	}
     }
 }
