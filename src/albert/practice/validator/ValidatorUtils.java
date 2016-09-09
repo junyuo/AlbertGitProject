@@ -6,6 +6,9 @@ import java.util.regex.Pattern;
 
 import org.w3c.tidy.Tidy;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ValidatorUtils {
 
     public Boolean isEmailValid(String email) {
@@ -44,6 +47,30 @@ public class ValidatorUtils {
         return isValid;
     }
 
+    /**
+     * characters only, no digits.
+     * 
+     * @param str
+     * @return
+     */
+    public Boolean isCharacterOnly(String str) {
+        Boolean isValid = Boolean.FALSE;
+        Pattern pattern = Pattern.compile("^[^0-9]*$");
+        if (pattern.matcher(str).matches()) {
+            isValid = Boolean.TRUE;
+        }
+        return isValid;
+    }
+
+    public Boolean isRedmineProjectIdentifierValid(String str) {
+        Boolean isValid = Boolean.FALSE;
+        Pattern pattern = Pattern.compile("^[a-z0-9_=]*$");
+        if (pattern.matcher(str).matches()) {
+            isValid = Boolean.TRUE;
+        }
+        return isValid;
+    }
+    
     public static void main(String[] args) {
         ValidatorUtils validator = new ValidatorUtils();
 
@@ -58,25 +85,35 @@ public class ValidatorUtils {
         System.out.println(validator.isPhoneNumberValid(validPhoneNum));
         System.out.println(validator.isPhoneNumberValid(invalidPhoneNum));
 
+        // StringBuilder htmlStr = getHtmlStr();
+        // System.out.println(validator.isHtmlValid(htmlStr.toString()));
+        log.debug("isCharacterOnly= " + validator.isCharacterOnly("abc"));
+        log.debug("isCharacterOnly= " + validator.isCharacterOnly("abc123"));
+        log.debug("isCharacterOnly= " + validator.isCharacterOnly("´ú¸Õa123bc"));
+        
+        log.debug("isRedmineProjectIdentifierValid = " + validator.isRedmineProjectIdentifierValid("=test_123"));
+    }
+
+    private static StringBuilder getHtmlStr() {
         StringBuilder htmlStr = new StringBuilder();
         htmlStr.append("<html>");
         htmlStr.append("   <body>");
-        htmlStr.append("      <p>è¦ªæ„›çš„ä¿æˆ¶æ‚¨å¥½</p>");
+        htmlStr.append("      <p>¿Ë·Rªº«O¤á±z¦n</p>");
         htmlStr.append("      <p>     </p>");
-        htmlStr.append("      <p>æ„Ÿè¬æ‚¨å°xxxxçš„æ”¯æŒï¼Œæ‚¨åœ¨ç¶²è·¯ä¸Šç”³è«‹çš„æ—…å¹³éšªä¿å–®å·²æŠ•ä¿å®Œæˆï¼Œä»¥ä¸‹æ˜¯æ‚¨çš„æŠ•ä¿æ˜ç´°ï¼Œä¾›æ‚¨åƒè€ƒã€‚</p>");
-        htmlStr.append("      <p>ã€æŠ•ä¿å…§å®¹ã€‘</p>");
-        htmlStr.append("      <p>ä¿å–®è™Ÿç¢¼: ${customer.policyNumber}</p>");
-        htmlStr.append("      <p>è¢«ä¿éšªäºº: ${customer.name}</p>");
-        htmlStr.append("      <p>ç”³è«‹æ—¥æœŸ: ${customer.applyDate}</p>");
-        htmlStr.append("      <p>ä¿éšªæœŸé–“: ${customer.fromDate} ~ ${customer.toDate}</p>");
-        htmlStr.append("      <p>æ—…éŠåœ°é»: ${customer.place}</p>");
+        htmlStr.append("      <p>·PÁÂ±z¹ïxxxxªº¤ä«ù¡A±z¦bºô¸ô¤W¥Ó½Ğªº®È¥­ÀI«O³æ¤w§ë«O§¹¦¨¡A¥H¤U¬O±zªº§ë«O©ú²Ó¡A¨Ñ±z°Ñ¦Ò¡C</p>");
+        htmlStr.append("      <p>¡i§ë«O¤º®e¡j</p>");
+        htmlStr.append("      <p>«O³æ¸¹½X: ${customer.policyNumber}</p>");
+        htmlStr.append("      <p>³Q«OÀI¤H: ${customer.name}</p>");
+        htmlStr.append("      <p>¥Ó½Ğ¤é´Á: ${customer.applyDate}</p>");
+        htmlStr.append("      <p>«OÀI´Á¶¡: ${customer.fromDate} ~ ${customer.toDate}</p>");
+        htmlStr.append("      <p>®È¹C¦aÂI: ${customer.place}</p>");
         htmlStr.append("      <p></p>");
-        htmlStr.append("      <p>â€»ä¿éšªå–®åŠä¿éšªè²»é€é‡‘å–®å°‡æ–¼è¿‘æ—¥å…§å¯„è‡³è¦ä¿äººæ‰€æŒ‡å®šä¹‹è¯çµ¡åœ°å€ã€‚</p>");
+        htmlStr.append("      <p>¡°«OÀI³æ¤Î«OÀI¶O°eª÷³æ±N©óªñ¤é¤º±H¦Ü­n«O¤H©Ò«ü©w¤§Ápµ¸¦a§}¡C</p>");
         htmlStr.append("      <p></p>");
-        htmlStr.append("      <p>                     æ•¬ç¥  é—”å®¶å¹³å®‰ </p>");
+        htmlStr.append("      <p>                     ·q¯¬  Âó®a¥­¦w </p>");
         htmlStr.append("      <p><img src='cid:panda'></p>");
         htmlStr.append("   </body>");
         htmlStr.append("</html>");
-        System.out.println(validator.isHtmlValid(htmlStr.toString()));
+        return htmlStr;
     }
 }
