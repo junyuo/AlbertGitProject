@@ -17,6 +17,7 @@ public class DataExport {
         context.doExport(new PdfExporter());
     }
 
+    @Deprecated
     public void exportData(FileTypeEnum fileType, String data) {
         ExportStrategy exporter = null;
         if (FileTypeEnum.XLS == fileType) {
