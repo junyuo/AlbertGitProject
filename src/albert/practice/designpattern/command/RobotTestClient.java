@@ -14,7 +14,6 @@ public class RobotTestClient {
         new GoAheadCommand(robot).execute();
         new TurnLeftCommand(robot).execute();
         new TurnRightCommand(robot).execute();
-        
     }
 
     public void executeRobot(Robot robot, CommandEnum command) {
