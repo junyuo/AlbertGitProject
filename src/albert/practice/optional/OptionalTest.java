@@ -61,6 +61,9 @@ public class OptionalTest {
     public void checkUncompletedSubtasks() {
         Optional<List<Subtask>> subtasks = getSubtasks();
         Optional<Subtask> uncompletedTask = subtasks.get().stream().filter(s -> Boolean.FALSE.equals(s.getIsCompleted())).findAny();
+        
+        long num = subtasks.get().stream().filter(s -> Boolean.FALSE.equals(s.getIsCompleted())).count();
+        log.debug("num = " + num);
         if(uncompletedTask.isPresent()) {
             throw new RuntimeException("還有尚未完成的子任務");
         }
@@ -68,7 +71,7 @@ public class OptionalTest {
     
     private Optional<List<Subtask>> getSubtasks(){
         Subtask task1 = new Subtask("檢查網路線", Boolean.TRUE);
-        Subtask task2 = new Subtask("檢查資料庫", Boolean.TRUE);
+        Subtask task2 = new Subtask("檢查資料庫", Boolean.FALSE);
         Subtask task3 = new Subtask("檢查伺服器", Boolean.FALSE);
         return Optional.ofNullable(Arrays.asList(task1, task2, task3));
     }
