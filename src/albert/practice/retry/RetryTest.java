@@ -1,6 +1,7 @@
 package albert.practice.retry;
 
-import java.util.Calendar;
+import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -12,17 +13,48 @@ import net.jodah.failsafe.RetryPolicy;
 @Slf4j
 public class RetryTest {
 
+    private int count = 0;
+
     public static void main(String[] args) throws ConnectionException {
-        @SuppressWarnings("unchecked")
-        RetryPolicy retryPolicy = new RetryPolicy().retryOn(ConnectionException.class)
-                .withDelay(2, TimeUnit.SECONDS).withMaxRetries(5);
-        Failsafe.with(retryPolicy).run(() -> new RetryTest().connect());
+        new RetryTest().connectWithRetry();
     }
 
-    public void connect() throws ConnectionException {
-        log.debug("time=" + new Date(Calendar.getInstance().getTimeInMillis()));
-        if (true) {
-             throw new ConnectionException("connection fail!");
+    public Connection connectWithRetry() {
+        // create a retry policy with 5 max retries and have 2 seconds delay among retries
+        RetryPolicy retryPolicy = new RetryPolicy();
+        retryPolicy.retryOn(ConnectionException.class).withDelay(2, TimeUnit.SECONDS)
+                .withMaxRetries(5);
+
+        // Using Fallbacks allow you to provide an alternative result for a failed execution.
+        // In this example, it will retry again after 5 seconds.
+        Connection conn = Failsafe.with(retryPolicy).withFallback(() -> retryIfFail())
+                .get(() -> connect());
+
+        return conn;
+    }
+
+    public void retryIfFail() throws InterruptedException {
+        log.debug("GG at " + getCurrentTime());
+        Thread.sleep(5000);
+
+        log.debug("retry....." + getCurrentTime());
+        connectWithRetry();
+    }
+
+    public Connection connect() throws ConnectionException {
+        log.debug(" time = " + getCurrentTime());
+        Connection conn = null;
+        if (count < 9) {
+            count++;
+            throw new ConnectionException("connection fail!");
+        } else {
+            log.debug("get connection successfuly...");
         }
+        return conn;
+    }
+
+    private String getCurrentTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
+        return dateFormat.format(new Date());
     }
 }
