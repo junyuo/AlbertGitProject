@@ -22,8 +22,13 @@ public class RetryTest {
     public Connection connectWithRetry() {
         // create a retry policy with 5 max retries and have 2 seconds delay among retries
         RetryPolicy retryPolicy = new RetryPolicy();
-        retryPolicy.retryOn(ConnectionException.class).withDelay(2, TimeUnit.SECONDS)
-                .withMaxRetries(5);
+//        retryPolicy.retryOn(ConnectionException.class).withDelay(2, TimeUnit.SECONDS)
+//                .withMaxRetries(5);
+
+        // create a retry policy and sets the delay 5 seconds between retries, exponentially backing off to the maxDelay 120
+        // seconds and multiplying successive delays by the delayFactor 2.
+        retryPolicy.retryOn(ConnectionException.class).withMaxRetries(5).withBackoff(5, 120,
+                TimeUnit.SECONDS, 2);
 
         // Using Fallbacks allow you to provide an alternative result for a failed execution.
         // In this example, it will retry again after 5 seconds.
