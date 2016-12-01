@@ -212,6 +212,12 @@
 			<artifactId>failsafe</artifactId>
 			<version>0.9.5</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.4</version>
+		</dependency>
 	</dependencies>
 
 </project>
