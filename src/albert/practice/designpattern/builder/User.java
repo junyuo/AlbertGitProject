@@ -3,7 +3,6 @@ package albert.practice.designpattern.builder;
 import java.util.regex.Pattern;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
